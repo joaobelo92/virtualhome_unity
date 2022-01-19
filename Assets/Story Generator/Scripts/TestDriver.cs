@@ -26,7 +26,7 @@ using RootMotion.FinalIK;
 namespace StoryGenerator
 {
     [RequireComponent(typeof(Recorder))]
-    public class TestDriver : MonoBehaviour
+    public class TestDriver : Driver
     {
 
         static ProfilerMarker s_GetGraphMarker = new ProfilerMarker("MySystem.GetGraph");
@@ -45,12 +45,12 @@ namespace StoryGenerator
 
         public static DataProviders dataProviders;
 
-        public List<State> CurrentStateList = new List<State>();
+        // public List<State> CurrentStateList = new List<State>();
         public int num_renderings = 0;
 
         private int numSceneCameras = 0;
         private int numCharacters = 0;
-        public int finishedChars = 0; // Used to count the number of characters finishing their actions.
+        // public int finishedChars = 0; // Used to count the number of characters finishing their actions.
 
 
         Recorder recorder;

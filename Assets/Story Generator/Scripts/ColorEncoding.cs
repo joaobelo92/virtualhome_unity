@@ -263,10 +263,6 @@ namespace StoryGenerator.Recording
                 list_gsi.Add(new GameObjectSgmtInfo(dummy_go, -1, clr_class_self));
                 index_gsi_parent = list_gsi.Count - 1;
             }
-            if (tsfm.name.Contains("StoveCoil"))
-            {
-                Debug.Log("HEre");
-            }
             if (m_instanceGroup_prefab.ContainsKey(tsfm.name)) {
                 id_inst_self = ColorEncoding.GetInstID();
                 id_inst_parent = id_inst_self;

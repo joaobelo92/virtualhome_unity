@@ -1248,6 +1248,7 @@ namespace StoryGenerator.Utilities
             }
             else
             {
+                Debug.Log("yes");
                 // Do Near Clip Plane 0.1 for forward_view_camera_name
                 foreach (KeyValuePair<string, CharacterCamera> entry in char_cams)
                 {

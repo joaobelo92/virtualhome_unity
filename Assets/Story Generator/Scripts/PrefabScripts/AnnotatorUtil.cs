@@ -54,10 +54,10 @@ namespace StoryGenerator.HomeAnnotation
 
         public static void ProcessHome(Transform h, bool shouldRandomize)
         {
-#if UNITY_EDITOR
-            UnityEditor.AI.NavMeshBuilder.ClearAllNavMeshes();
-            UnityEditor.AI.NavMeshBuilder.BuildNavMesh();
-#endif
+// #if UNITY_EDITOR
+//             UnityEditor.AI.NavMeshBuilder.ClearAllNavMeshes();
+//             UnityEditor.AI.NavMeshBuilder.BuildNavMesh();
+// #endif
             if (shouldRandomize)
             {
                 GlobalRandomization(h);

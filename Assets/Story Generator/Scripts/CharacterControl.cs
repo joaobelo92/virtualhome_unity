@@ -846,7 +846,7 @@ namespace StoryGenerator
             if (p == Vector3.positiveInfinity || path.status == NavMeshPathStatus.PathInvalid)
             {
                 retval = false;
-                Debug.LogError( "Character cannot reach the destination" + string.Join(", ", positions) );
+                Debug.LogError( "Character cannot reach the destination" + string.Join(", ", positions) + " " + path.status );
                 if (rcdr != null)
                 {
                     rcdr.Error = new ExecutionError("Path not complete");

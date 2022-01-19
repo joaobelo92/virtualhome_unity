@@ -727,6 +727,11 @@ namespace StoryGenerator.Utilities
     {
         public IAction Action { get; set; }
         public Func<IAction, State, IEnumerable<IStateGroup>> ProcessMethod { get; set; }  // (action, state) -> enumerator of next admissible states
+
+        public override string ToString()
+        {
+            return $"{Action}";
+        }
     }
 
     public class PartialLocation
@@ -839,7 +844,7 @@ namespace StoryGenerator.Utilities
         
 
         // *****
-        private TestDriver caller;
+        private Driver caller;
 
 
         public ScriptExecutor(IList<GameObject> nameList, RoomSelector roomSelector,
@@ -1221,7 +1226,6 @@ namespace StoryGenerator.Utilities
                 else if (a.Intention == InteractionType.CLOSE || a.Intention == InteractionType.OPEN)
                 {
                     IList<Vector3> intPositions;
-
                     if (IsOpenable(Vector3.zero, opd, go, out intPositions, false, a.Intention))
                     {
                         List<Vector3> filteredIPs = new List<Vector3>();
@@ -2116,7 +2120,7 @@ namespace StoryGenerator.Utilities
                 }
                 else
                 {
-                    report.AddItem("PROCESS OPEN", $"Not found object: {a.Name.Name}");
+                    report.AddItem("PROCESS OPEN #1", $"Not found object: {a.Name.Name}");
                     return StateList.Empty;
                 }
             }
@@ -2185,7 +2189,7 @@ namespace StoryGenerator.Utilities
         private IEnumerable<IStateGroup> ProcessGrab(GrabAction a, State current)
         {
             ScriptObjectData sod;
-            if (!TestDriver.dataProviders.ObjectPropertiesProvider.PropertiesForClass(a.Name.Name).Contains("GRABBABLE"))
+            if (!caller.dataProviders.ObjectPropertiesProvider.PropertiesForClass(a.Name.Name).Contains("GRABBABLE"))
             {
                 return StateList.Empty;
 
@@ -3162,12 +3166,15 @@ namespace StoryGenerator.Utilities
 
 
         // Prepare scene, process & execute script
-        public IEnumerator ProcessAndExecute(bool recording, TestDriver caller)
+        public IEnumerator ProcessAndExecute(bool recording, Driver caller)
         {
             this.caller = caller;
             report.Reset();
+            Debug.Log(script.Count);
             IEnumerator<StateList> enumerator = ExceptionSafeEnumerator(Process(script).GetEnumerator());
             IEnumerator result;
+
+
             if (enumerator.MoveNext())
             {
                 //processStopwatch.Stop();
@@ -3177,7 +3184,7 @@ namespace StoryGenerator.Utilities
                 {
                     if (this.find_solution)
                     {
-                        PrepareSceneForScript(enumerator.Current, recorder.saveSceneStates);
+                        PrepareSceneForScript(enumerator.Current, true);
                     }
                     System.Diagnostics.Stopwatch prepareStopwatch = System.Diagnostics.Stopwatch.StartNew();
                     if (recording)
@@ -3259,6 +3266,7 @@ namespace StoryGenerator.Utilities
 
         private IEnumerable<StateList> ProcessRec(List<ScriptPair> spl, int spli, StateList sl)
         {
+            // Debug.Log(sl.Count);
             if (spli >= spl.Count || sl.Count == 0)
             {
                 caller.CurrentStateList[this.charIndex] = sl.Last();
