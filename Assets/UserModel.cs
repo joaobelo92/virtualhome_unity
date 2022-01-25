@@ -24,8 +24,8 @@ public class UserModel : Driver
     private int numCharacters = 0;
     List<Camera> cameras;
     
-    EnvironmentGraphCreator currentGraphCreator = null;
-    EnvironmentGraph currentGraph = null;
+    EnvironmentGraphCreator currentGraphCreator;
+    EnvironmentGraph currentGraph;
 
     public String[] lines =
     {
@@ -64,7 +64,7 @@ public class UserModel : Driver
             dataProviders = new DataProviders();
         }
         
-        List<string> list_assets = dataProviders.AssetsProvider.GetAssetsPaths();
+        dataProviders.AssetsProvider.GetAssetsPaths();
         
         OneTimeInitializer cameraInitializer = new OneTimeInitializer();
 
@@ -92,7 +92,7 @@ public class UserModel : Driver
         cameras.AddRange(charCameras);
         CameraUtils.InitCameras(cameras);
 
-        StartCoroutine(ProcessScript());
+        StartCoroutine(ProcessScript(lines.ToList()));
     }
 
     // Update is called once per frame
@@ -101,7 +101,7 @@ public class UserModel : Driver
         
     }
 
-    IEnumerator ProcessScript()
+    IEnumerator ProcessScript(List<string> scriptLines)
     {
         ExecutionConfig executionConfig = new ExecutionConfig();
         
@@ -117,7 +117,7 @@ public class UserModel : Driver
             sExecutors = InitScriptExecutors(executionConfig, objectSelectorProvider, objectList);
         }
         
-        List<string> scriptLines = lines.ToList();
+        // List<string> scriptLines = lines.ToList();
         
         for (int i = 0; i < numCharacters; i++)
         {

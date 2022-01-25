@@ -727,11 +727,6 @@ namespace StoryGenerator.Utilities
     {
         public IAction Action { get; set; }
         public Func<IAction, State, IEnumerable<IStateGroup>> ProcessMethod { get; set; }  // (action, state) -> enumerator of next admissible states
-
-        public override string ToString()
-        {
-            return $"{Action}";
-        }
     }
 
     public class PartialLocation
@@ -1117,9 +1112,9 @@ namespace StoryGenerator.Utilities
                     if (opd.Grabbed)
                         continue;
                     goPos = opd.Position;
-                    intPos = opd.InteractionPosition;
+                    // recompute intPos for lookat not to break walk.. 
+                    intPos = null;
                 }
-
 
                 if (this.find_solution)
                 {
@@ -1521,7 +1516,6 @@ namespace StoryGenerator.Utilities
 
                     if (path_is_ok == true)
                     {
-
                         State s = new State(current, a, walk_pos, ExecuteGotowards);
 
                         if (lookat_pos.HasValue)
@@ -1915,27 +1909,38 @@ namespace StoryGenerator.Utilities
             }
             else
             { // Can turn
-                bool canSelect = false;
-
+                // bool canSelect = false;
+                bool canWatch = false;
+                
                 foreach (ObjectData god in SelectObjects(a.Name, a.Selector, current))
                 {
                     GameObject go = god.GameObject;
                     IInteractionArea area = propCalculator.GetInteractionArea(god.Position, InteractionType.WATCH);
 
-                    if (area.ContainsPoint(new Vector2(ip.x, ip.z)))
+                    // Debug.Log($"Process Watch {a.Name} {ip.x} {ip.z} {go.transform.position} {go.name}");
+                    
+                    // if (area.ContainsPoint(new Vector2(ip.x, ip.z)))
+                    // {
+                    // if (IsVisibleFromSegment(go, ip, 1.0f, 1.8f, 0.2f, true))
+                    // {
+                    //     State s = new State(current, a, current.InteractionPosition, ExecuteWatch);
+                    //     s.AddScriptGameObject(a.Name, go, god.Position, current.InteractionPosition);
+                    //     canSelect = true;
+                    //     yield return s;
+                    // }
+                    // }
+                    
+                    if (IsVisibleFromSegment(go, ip, 1.0f, 1.8f, 0.2f, true))
                     {
-                        if (IsVisibleFromSegment(go, ip, 1.0f, 1.8f, 0.2f, true))
-                        {
-                            State s = new State(current, a, current.InteractionPosition, ExecuteTurn);
-                            s.AddScriptGameObject(a.Name, go, god.Position, current.InteractionPosition);
-                            canSelect = true;
-                            yield return s;
-                        }
+                        State s = new State(current, a, current.InteractionPosition, ExecuteWatch);
+                        s.AddScriptGameObject(a.Name, go, god.Position, current.InteractionPosition);
+                        canWatch = true;
+                        yield return s;
                     }
                 }
-                if (!canSelect)
+                if (!canWatch)
                 {
-                    report.AddItem("PROCESS WATCH", $"Can not select object to watch: {a.Name.Name}");
+                    report.AddItem("PROCESS WATCH", $"Can not watch object: {a.Name.Name}");
                 }
             }
         }
@@ -2724,8 +2729,10 @@ namespace StoryGenerator.Utilities
         {
             WatchAction wa = (WatchAction)s.Action;
 
-            recorder.MarkActionStart(InteractionType.WATCH, wa.ScriptLine);
-            yield return new WaitForSeconds(wa.Duration);
+            // recorder.MarkActionStart(InteractionType.WATCH, wa.ScriptLine);
+            
+            // yield return new WaitForSeconds(wa.Duration);
+            yield return characterControl.StartCoroutine(characterControl.Watch(s.GetScriptGameObject(wa.Name), wa.Duration));
         }
 
         private IEnumerator ExecuteGoforward(State s)
@@ -2816,7 +2823,7 @@ namespace StoryGenerator.Utilities
                 s.InteractionPosition, next_look, false));
             }
 
-
+    
         }
 
         private IEnumerator ExecuteRotate(State s)
@@ -4099,6 +4106,9 @@ namespace StoryGenerator.Utilities
                     break;
                 case InteractionType.WATCH:
                 case InteractionType.LOOKAT:
+                    sExecutor.AddAction(new WatchAction(sl.LineNumber, sExecutor.GetObjectSelector(name0, instance0),
+                        name0, instance0, WatchAction.MediumDuration));
+                    break;
                 case InteractionType.LOOKAT_MEDIUM:
                 case InteractionType.TURNTO:
                 case InteractionType.POINTAT:

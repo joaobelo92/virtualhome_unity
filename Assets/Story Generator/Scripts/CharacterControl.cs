@@ -248,6 +248,7 @@ namespace StoryGenerator
         bool m_anm_isCharSittingDown;
         bool m_anm_isLastDoorOpenPush;
         IkTargets m_ikTargets;
+        LookAtIK ikSolverLookAt;
         
         delegate void LateUpdateDelegate();
         LateUpdateDelegate onLateUpdate;
@@ -281,6 +282,7 @@ namespace StoryGenerator
             m_rb = GetComponent<Rigidbody> ();
             m_nma = GetComponent<NavMeshAgent>();
             m_is = GetComponent<InteractionSystem> ();
+            ikSolverLookAt = GetComponent<LookAtIK>();
 
             m_is.speed = animSpeedMultiplier;
             m_animator.speed = animSpeedMultiplier;
@@ -367,6 +369,14 @@ namespace StoryGenerator
                 string objType = Helper.GetClassGroups()[go.name].className;
                 stateChar.UpdateSittingOn(objType);
             }
+        }
+
+        public IEnumerator Watch(GameObject objToWatch, float duration)
+        {
+            Transform lookAtTarget = objToWatch.transform.Find("LookAtTarget") ?? objToWatch.transform;
+            
+            ikSolverLookAt.solver.target = lookAtTarget;
+            yield return new WaitForSeconds(duration);
         }
 
         public IEnumerator Stand()
