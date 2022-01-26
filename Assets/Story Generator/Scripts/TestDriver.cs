@@ -43,8 +43,6 @@ namespace StoryGenerator
         static HttpCommunicationServer commServer;
         static NetworkRequest networkRequest = null;
 
-        public static DataProviders dataProviders;
-
         // public List<State> CurrentStateList = new List<State>();
         public int num_renderings = 0;
 

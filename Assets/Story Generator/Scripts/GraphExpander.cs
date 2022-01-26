@@ -1067,7 +1067,7 @@ namespace StoryGenerator.Utilities
                 positions = GameObjectUtils.CalculatePutPositions(destObj.bounding_box.bounds.center + centerDelta, loadedObj,
                     destObj.transform.gameObject, inside, IgnoreObstacles);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw new ExpanderException(true, "Bounds of object " + destObj.class_name + " are not defined when placing " + className);
             }

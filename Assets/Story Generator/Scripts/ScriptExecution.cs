@@ -901,7 +901,7 @@ namespace StoryGenerator.Utilities
         {
             foreach (var kv in nameList)
             {
-                if (selector.IsSelectable(kv))
+                if (kv != null && selector.IsSelectable(kv))
                     yield return kv;
             }
         }
@@ -1409,7 +1409,7 @@ namespace StoryGenerator.Utilities
 
                 else
                 {
-                    if (TestDriver.dataProviders.ObjectPropertiesProvider.PropertiesForClass(a.Name.Name).Contains("GRABBABLE"))
+                    if (Driver.dataProviders.ObjectPropertiesProvider.PropertiesForClass(a.Name.Name).Contains("GRABBABLE"))
                     {
                         goPos = go.transform.position;
                         intPos = null;
@@ -2194,7 +2194,7 @@ namespace StoryGenerator.Utilities
         private IEnumerable<IStateGroup> ProcessGrab(GrabAction a, State current)
         {
             ScriptObjectData sod;
-            if (!caller.dataProviders.ObjectPropertiesProvider.PropertiesForClass(a.Name.Name).Contains("GRABBABLE"))
+            if (!Driver.dataProviders.ObjectPropertiesProvider.PropertiesForClass(a.Name.Name).Contains("GRABBABLE"))
             {
                 return StateList.Empty;
 
@@ -3261,7 +3261,6 @@ namespace StoryGenerator.Utilities
             }
 
             gotoExecDepth = 0;
-            gotoExecDepth = 0;
             Debug.Log("Process...");
             Debug.Log(this.charIndex);
             execStartTime.Start();
@@ -3273,10 +3272,9 @@ namespace StoryGenerator.Utilities
 
         private IEnumerable<StateList> ProcessRec(List<ScriptPair> spl, int spli, StateList sl)
         {
-            // Debug.Log(sl.Count);
             if (spli >= spl.Count || sl.Count == 0)
             {
-                caller.CurrentStateList[this.charIndex] = sl.Last();
+                caller.CurrentStateList[charIndex] = sl.Last();
                 yield return sl;
             }
             else
@@ -3284,8 +3282,8 @@ namespace StoryGenerator.Utilities
                 ScriptPair sp = spl[spli];
                 State last = sl.Last();
 
-                if (sp.Action is GotoAction && gotoExecDepth < sl.Count)
-                    gotoExecDepth = spli;
+                // if (sp.Action is GotoAction && gotoExecDepth < sl.Count)
+                //     gotoExecDepth = spli;
                 foreach (IStateGroup sg in sp.ProcessMethod(sp.Action, last))
                 {
                     StateList appSl = new StateList(sl);
@@ -3295,10 +3293,10 @@ namespace StoryGenerator.Utilities
                     {
                         yield return newSl;
                     }
-                    if (/*s.Action is GotoAction && spli < gotoExecDepth - 1 || */ execStartTime.ElapsedMilliseconds > processingTimeLimit)
-                    {
-                        break;
-                    }
+                    // if (/*s.Action is GotoAction && spli < gotoExecDepth - 1 || */ execStartTime.ElapsedMilliseconds > processingTimeLimit)
+                    // {
+                    //     break;
+                    // }
                 }
             }
         }

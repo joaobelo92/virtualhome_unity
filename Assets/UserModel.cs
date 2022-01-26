@@ -23,14 +23,39 @@ public class UserModel : Driver
     private List<Recorder> recorders = new List<Recorder>();
     private int numCharacters = 0;
     List<Camera> cameras;
+    private ExecutionConfig executionConfig;
+
+    [SerializeField]
+    private List<GameObject> objectsOutside;
+    [SerializeField]
+    // private bool loop = false;
     
-    EnvironmentGraphCreator currentGraphCreator;
-    EnvironmentGraph currentGraph;
+    private List<GameObject> objectsFridge;
+
+    private IObjectSelectorProvider objectSelectorProvider;
+    private IList<GameObject> objectList;
+    // take/put something from fridge
+    // prepare piece of food (cut/etc)
+    // go to stove & turn on
+    // put/take something on pot
+    // take/put something in microwave
+    // use the tap
+    // put something in sink
+    // put plate on table
+    
+    // do something unrelated (watch TV / go to computer)
+    // wait at current task
 
     public String[] lines =
     {
         "<char0> [walk] <fridge> (1)",
         "<char0> [open] <fridge> (1)",
+        "<char0> [walk] <stove> (1)",
+        "<char0> [walk] <fridge> (1)"
+    };
+    
+    public String[] lines2 =
+    {
         "<char0> [walk] <stove> (1)",
         "<char0> [walk] <fridge> (1)"
     };
@@ -53,12 +78,11 @@ public class UserModel : Driver
         sExecutors = new List<ScriptExecutor>();
         
         ProcessHome(false);
-
-        InitRooms();
-
-        CameraExpander.ResetCameraExpander();
         
-        cameras = new List<Camera>();
+        InitRooms();
+        // CameraExpander.ResetCameraExpander();
+        
+        // cameras = new List<Camera>();
         
         if (dataProviders == null) {
             dataProviders = new DataProviders();
@@ -66,47 +90,51 @@ public class UserModel : Driver
         
         dataProviders.AssetsProvider.GetAssetsPaths();
         
-        OneTimeInitializer cameraInitializer = new OneTimeInitializer();
+        // OneTimeInitializer cameraInitializer = new OneTimeInitializer();
 
         List<GameObject> sceneCharacters = ScriptUtils.FindAllCharacters(transform);
         CharacterControl cc = sceneCharacters[0].GetComponent<CharacterControl>();
         characters.Add(cc);
         CurrentStateList.Add(null);
         numCharacters++;
-        cameraInitializer.initialized = false;
+        // cameraInitializer.initialized = false;
         
-        List<GameObject> rooms = ScriptUtils.FindAllRooms(transform);
-        foreach (GameObject r in rooms)
-        {
-            if (r.GetComponent<Properties_room>() == null)
-                r.AddComponent<Properties_room>();
-        }
-        
-        
-        currentGraphCreator = new EnvironmentGraphCreator(dataProviders);
-        currentGraph = currentGraphCreator.CreateGraph(transform);
-        
-        CameraExpander.ResetCameraExpander();
-        List<Camera> charCameras = CameraExpander.AddCharacterCameras(sceneCharacters[0], transform, CameraExpander.INT_FORWARD_VIEW_CAMERA_NAME);
-        // CameraUtils.DeactivateCameras(charCameras);
-        cameras.AddRange(charCameras);
-        CameraUtils.InitCameras(cameras);
+        // Init rooms
+        // List<GameObject> rooms = ScriptUtils.FindAllRooms(transform);
+        // foreach (GameObject r in rooms)
+        // {
+        //     if (r.GetComponent<Properties_room>() == null)
+        //         r.AddComponent<Properties_room>();
+        // }
 
+        // CameraExpander.ResetCameraExpander();
+        // List<Camera> charCameras = CameraExpander.AddCharacterCameras(sceneCharacters[0], transform, CameraExpander.INT_FORWARD_VIEW_CAMERA_NAME);
+        // CameraUtils.DeactivateCameras(charCameras);
+        // cameras.AddRange(charCameras);
+        // CameraUtils.InitCameras(cameras);
+        
+                
+
+        
         StartCoroutine(ProcessScript(lines.ToList()));
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (finishedChars == 1)
+        {
+            StartCoroutine(ProcessScript(lines2.ToList()));
+        }
     }
 
     IEnumerator ProcessScript(List<string> scriptLines)
     {
-        ExecutionConfig executionConfig = new ExecutionConfig();
+        objectSelectorProvider = new ObjectSelectionProvider(dataProviders.NameEquivalenceProvider);
+        objectList = ScriptUtils.FindAllObjects(transform);
+
+        executionConfig = new ExecutionConfig();
         
-        IObjectSelectorProvider objectSelectorProvider = new ObjectSelectionProvider(dataProviders.NameEquivalenceProvider);
-        IList<GameObject> objectList = ScriptUtils.FindAllObjects(transform);
         if (recorders.Count != numCharacters)
         {
             createRecorders(executionConfig);
@@ -117,25 +145,30 @@ public class UserModel : Driver
             sExecutors = InitScriptExecutors(executionConfig, objectSelectorProvider, objectList);
         }
         
-        // List<string> scriptLines = lines.ToList();
+        // EnvironmentGraphCreator currentGraphCreator  = null;
+        // EnvironmentGraph currentGraph = null;
         
+        finishedChars = 0;
+        
+        //
+        // if (currentGraph == null)
+        // {
+        //     currentGraphCreator = new EnvironmentGraphCreator(dataProviders);
+        //     currentGraph = currentGraphCreator.CreateGraph(transform);
+        // }
+
         for (int i = 0; i < numCharacters; i++)
         {
             sExecutors[i].ClearScript();
             sExecutors[i].smooth_walk = !executionConfig.skip_animation;
         }
-
+        
         ScriptReader.ParseScript(sExecutors, scriptLines, dataProviders.ActionEquivalenceProvider);
         
         
         List<Tuple<int, Tuple<String, String>>> errorMessages = new List<Tuple<int, Tuple<String, String>>>();
         if (!executionConfig.find_solution)
             errorMessages = ScriptChecker.SolveConflicts(sExecutors);
-
-        // foreach (var script in sExecutors[0].script)
-        // {
-        //     Debug.Log(script);
-        // }
          
         for (int i = 0; i < numCharacters; i++)
         {
@@ -156,111 +189,109 @@ public class UserModel : Driver
         if (!sExecutors[0].Success)
         {
             String message = "";
-            message += $"ScriptExcutor : ";
+            message += $"ScriptExecutor : ";
             message += sExecutors[0].CreateReportString();
             message += "\n";
             Debug.LogWarning(message);
         }
 
-        finishedChars = 0;
-        ScriptExecutor.actionsPerLine = new Hashtable();
-        ScriptExecutor.currRunlineNo = 0;
-        ScriptExecutor.currActionsFinished = 0;
-        
-        ISet<GameObject> changedObjs = new HashSet<GameObject>();
-        IDictionary<Tuple<string, int>, ScriptObjectData> script_object_changed = new Dictionary<Tuple<string, int>, ScriptObjectData>();
-        List<ActionObjectData> last_action = new List<ActionObjectData>();
-        bool single_action = true;
-        for (int char_index = 0; char_index < numCharacters; char_index++)
-        {
-            State currentState = this.CurrentStateList[char_index];
-            GameObject rh = currentState.GetGameObject("RIGHT_HAND_OBJECT");
-            GameObject lh = currentState.GetGameObject("LEFT_HAND_OBJECT");
-            EnvironmentObject obj1;
-            EnvironmentObject obj2;
-            currentGraphCreator.objectNodeMap.TryGetValue(characters[char_index].gameObject, out obj1);
-            Character character_graph;
-            currentGraphCreator.characters.TryGetValue(obj1, out character_graph);
-
-            if (sExecutors[char_index].script.Count > 1)
-            {
-                single_action = false;
-            }
-            if (sExecutors[char_index].script.Count == 1)
-            {
-                // If only one action was executed, we will use that action to update the environment
-                // Otherwise, we will update using coordinates
-                ScriptPair script = sExecutors[char_index].script[0];
-                ActionObjectData object_script = new ActionObjectData(character_graph, script, currentState.scriptObjects);
-                last_action.Add(object_script);
-
-            }
-            Debug.Assert(character_graph != null);
-            if (lh != null)
-            {
-                currentGraphCreator.objectNodeMap.TryGetValue(lh, out obj2);
-                character_graph.grabbed_left = obj2;
-
-            }
-            else
-            {
-                character_graph.grabbed_left = null;
-            }
-            if (rh != null)
-            {
-                currentGraphCreator.objectNodeMap.TryGetValue(rh, out obj2);
-                character_graph.grabbed_right = obj2;
-            }
-            else
-            {
-
-                character_graph.grabbed_right = null;
-            }
-
-            IDictionary<Tuple<string, int>, ScriptObjectData> script_objects_state = currentState.scriptObjects;
-            foreach (KeyValuePair<Tuple<string, int>, ScriptObjectData> entry in script_objects_state)
-            {
-                if (!entry.Value.GameObject.IsRoom())
-                {
-                    //if (entry.Key.Item1 == "cutleryknife")
-                    //{
-
-                    //    //int instance_id = entry.Value.GameObject.GetInstanceID();
-                    //}
-                    changedObjs.Add(entry.Value.GameObject);
-                }
-
-                if (entry.Value.OpenStatus != OpenStatus.UNKNOWN)
-                {
-                    if (sExecutors[char_index].script.Count > 0 && sExecutors[char_index].script[0].Action.Name.Instance == entry.Key.Item2)
-                    {
-                        script_object_changed[entry.Key] = entry.Value;
-                    }
-                }
-
-            }
-            foreach (KeyValuePair<Tuple<string, int>, ScriptObjectData> entry in script_object_changed)
-            {
-                if (entry.Value.OpenStatus == OpenStatus.OPEN)
-                {
-                    currentGraphCreator.objectNodeMap[entry.Value.GameObject].states.Remove(ObjectState.CLOSED);
-                    currentGraphCreator.objectNodeMap[entry.Value.GameObject].states.Add(ObjectState.OPEN);
-                }
-                else if (entry.Value.OpenStatus == OpenStatus.CLOSED)
-                {
-                    currentGraphCreator.objectNodeMap[entry.Value.GameObject].states.Remove(ObjectState.OPEN);
-                    currentGraphCreator.objectNodeMap[entry.Value.GameObject].states.Add(ObjectState.CLOSED);
-                }
-            }
-
-            using (s_UpdateGraph.Auto())
-            {
-                if (single_action)
-                    currentGraph = currentGraphCreator.UpdateGraph(transform, null, last_action);
-                else
-                    currentGraph = currentGraphCreator.UpdateGraph(transform, changedObjs);
-            }
-        }
+        // ScriptExecutor.actionsPerLine = new Hashtable();
+        // ScriptExecutor.currRunlineNo = 0;
+        // ScriptExecutor.currActionsFinished = 0;
+        //
+        // ISet<GameObject> changedObjs = new HashSet<GameObject>();
+        // IDictionary<Tuple<string, int>, ScriptObjectData> script_object_changed = new Dictionary<Tuple<string, int>, ScriptObjectData>();
+        // List<ActionObjectData> last_action = new List<ActionObjectData>();
+        // bool single_action = true;
+        // for (int char_index = 0; char_index < numCharacters; char_index++)
+        // {
+        //     State currentState = this.CurrentStateList[char_index];
+        //     GameObject rh = currentState.GetGameObject("RIGHT_HAND_OBJECT");
+        //     GameObject lh = currentState.GetGameObject("LEFT_HAND_OBJECT");
+        //     EnvironmentObject obj1;
+        //     EnvironmentObject obj2;
+        //     currentGraphCreator.objectNodeMap.TryGetValue(characters[char_index].gameObject, out obj1);
+        //     Character character_graph;
+        //     currentGraphCreator.characters.TryGetValue(obj1, out character_graph);
+        //
+        //     if (sExecutors[char_index].script.Count > 1)
+        //     {
+        //         single_action = false;
+        //     }
+        //     if (sExecutors[char_index].script.Count == 1)
+        //     {
+        //         // If only one action was executed, we will use that action to update the environment
+        //         // Otherwise, we will update using coordinates
+        //         ScriptPair script = sExecutors[char_index].script[0];
+        //         ActionObjectData object_script = new ActionObjectData(character_graph, script, currentState.scriptObjects);
+        //         last_action.Add(object_script);
+        //
+        //     }
+        //     if (lh != null)
+        //     {
+        //         currentGraphCreator.objectNodeMap.TryGetValue(lh, out obj2);
+        //         character_graph.grabbed_left = obj2;
+        //
+        //     }
+        //     else
+        //     {
+        //         character_graph.grabbed_left = null;
+        //     }
+        //     if (rh != null)
+        //     {
+        //         currentGraphCreator.objectNodeMap.TryGetValue(rh, out obj2);
+        //         character_graph.grabbed_right = obj2;
+        //     }
+        //     else
+        //     {
+        //
+        //         character_graph.grabbed_right = null;
+        //     }
+        //
+        //     IDictionary<Tuple<string, int>, ScriptObjectData> script_objects_state = currentState.scriptObjects;
+        //     foreach (KeyValuePair<Tuple<string, int>, ScriptObjectData> entry in script_objects_state)
+        //     {
+        //         if (!entry.Value.GameObject.IsRoom())
+        //         {
+        //             //if (entry.Key.Item1 == "cutleryknife")
+        //             //{
+        //
+        //             //    //int instance_id = entry.Value.GameObject.GetInstanceID();
+        //             //}
+        //             changedObjs.Add(entry.Value.GameObject);
+        //         }
+        //
+        //         if (entry.Value.OpenStatus != OpenStatus.UNKNOWN)
+        //         {
+        //             if (sExecutors[char_index].script.Count > 0 && sExecutors[char_index].script[0].Action.Name.Instance == entry.Key.Item2)
+        //             {
+        //                 script_object_changed[entry.Key] = entry.Value;
+        //             }
+        //         }
+        //
+        //     }
+        //     foreach (KeyValuePair<Tuple<string, int>, ScriptObjectData> entry in script_object_changed)
+        //     {
+        //         if (entry.Value.OpenStatus == OpenStatus.OPEN)
+        //         {
+        //             currentGraphCreator.objectNodeMap[entry.Value.GameObject].states.Remove(ObjectState.CLOSED);
+        //             currentGraphCreator.objectNodeMap[entry.Value.GameObject].states.Add(ObjectState.OPEN);
+        //         }
+        //         else if (entry.Value.OpenStatus == OpenStatus.CLOSED)
+        //         {
+        //             currentGraphCreator.objectNodeMap[entry.Value.GameObject].states.Remove(ObjectState.OPEN);
+        //             currentGraphCreator.objectNodeMap[entry.Value.GameObject].states.Add(ObjectState.CLOSED);
+        //         }
+        //     }
+        //
+        //     using (s_UpdateGraph.Auto())
+        //     {
+        //         if (single_action)
+        //             currentGraph = currentGraphCreator.UpdateGraph(transform, null, last_action);
+        //         else
+        //             currentGraph = currentGraphCreator.UpdateGraph(transform, changedObjs);
+        //     }
+        // }
         
     }
 

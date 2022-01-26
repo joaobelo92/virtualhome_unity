@@ -10,6 +10,6 @@ namespace StoryGenerator
         public List<State> CurrentStateList = new List<State>();
         public int finishedChars = 0;
 
-        public DataProviders dataProviders;
+        public static DataProviders dataProviders;
     }
 }

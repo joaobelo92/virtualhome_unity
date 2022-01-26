@@ -74204,11 +74204,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 2086136793}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b3509914c77447d8b22734079f8e215, type: 3}
+  m_Script: {fileID: 11500000, guid: 075836b6fe655bf43b2a5b2fc3c4cd42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  num_renderings: 0
   finishedChars: 0
+  objectsOutside: []
+  objectsFridge: []
+  lines:
+  - <char0> [walk] <fridge> (1)
+  - <char0> [open] <fridge> (1)
+  - <char0> [close] <fridge> (1)
+  lines2:
+  - <char0> [walk] <stove> (1)
+  - <char0> [walk] <fridge> (1)
 --- !u!114 &2086136796
 MonoBehaviour:
   m_ObjectHideFlags: 0

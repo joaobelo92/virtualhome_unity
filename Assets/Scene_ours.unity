@@ -38131,7 +38131,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1241789578}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.033, z: 0}
+  m_LocalPosition: {x: 0, y: 1.186, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1231946345}
@@ -50517,8 +50517,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1568106475}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.016, y: 1.074, z: -0.084}
+  m_LocalRotation: {x: -0, y: 0.3346472, z: -0, w: 0.9423435}
+  m_LocalPosition: {x: -7.016242, y: 1.070049, z: 1.4996433}
   m_LocalScale: {x: 0.30000004, y: 0.3, z: 0.30000004}
   m_Children:
   - {fileID: 1924603457}
@@ -67448,6 +67448,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -29.98
       objectReference: {fileID: 0}
+    - target: {fileID: 9554704, guid: 6c3c16eb2bfa14c2baefebba6bddec04, type: 3}
+      propertyPath: m_Avatar
+      value: 
+      objectReference: {fileID: 9000000, guid: 9d5e434a2e80a114aa8a697c09eb432b, type: 3}
+    - target: {fileID: 9554704, guid: 6c3c16eb2bfa14c2baefebba6bddec04, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 2948470da737740edab90be8d9f7949a, type: 2}
+    - target: {fileID: 11411506, guid: 6c3c16eb2bfa14c2baefebba6bddec04, type: 3}
+      propertyPath: solver.spineStiffness
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 11411506, guid: 6c3c16eb2bfa14c2baefebba6bddec04, type: 3}
       propertyPath: solver.effectors.Array.data[5].maintainRelativePositionWeight
       value: 0.4
@@ -69450,15 +69462,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   finishedChars: 0
+  objectsOutside: []
+  objectsFridge: []
   lines:
   - <char0> [lookat] <cutlets> (1)
-  - <char0> [walk] <cutlets> (1)
   - <char0> [grab] <cutlets> (1)
   - <char0> [lookat] <fridge> (1)
   - <char0> [walk] <fridge> (1)
   - <char0> [open] <fridge> (1)
   - <char0> [putin] <cutlets> (1) <fridge> (1)
   - <char0> [close] <fridge> (1)
+  lines2:
+  - <char0> [walk] <microwave> (1)
+  - <char0> [walk] <fridge> (1)
 --- !u!114 &2086136796
 MonoBehaviour:
   m_ObjectHideFlags: 0
