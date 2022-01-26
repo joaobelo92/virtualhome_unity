@@ -387,7 +387,7 @@ namespace StoryGenerator
             while ( t  < duration )
             {
                 t += Time.deltaTime;
-                float weight = Mathf.Lerp(0, 0.7f, t / duration) % 0.8f;
+                float weight = Mathf.Lerp(0, 0.5f, t / duration) % 0.8f;
                 ikSolverLookAt.solver.IKPositionWeight = weight;
                 yield return null;
             }

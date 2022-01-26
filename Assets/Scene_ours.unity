@@ -8271,6 +8271,12 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!4 &299743164 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 425084, guid: 6c3c16eb2bfa14c2baefebba6bddec04,
+    type: 3}
+  m_PrefabInstance: {fileID: 2019287483}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &299998211
 GameObject:
   m_ObjectHideFlags: 0
@@ -22532,6 +22538,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 745768992}
   m_Mesh: {fileID: 4300000, guid: b550a1f8ec6d1984e892469f2e0e229d, type: 3}
+--- !u!4 &746111087 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 444250, guid: 6c3c16eb2bfa14c2baefebba6bddec04,
+    type: 3}
+  m_PrefabInstance: {fileID: 2019287483}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &746114588
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -39882,6 +39894,12 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.7800177, y: 0.0131390095, z: 1.7078663}
   m_Center: {x: -0.02414063, y: 0.4241463, z: -0.8160781}
+--- !u!4 &1283232482 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 412676, guid: 6c3c16eb2bfa14c2baefebba6bddec04,
+    type: 3}
+  m_PrefabInstance: {fileID: 2019287483}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1287904046
 GameObject:
   m_ObjectHideFlags: 0
@@ -50905,6 +50923,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1582996056}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &1585036102 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 490230, guid: 6c3c16eb2bfa14c2baefebba6bddec04,
+    type: 3}
+  m_PrefabInstance: {fileID: 2019287483}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1585151936
 GameObject:
   m_ObjectHideFlags: 0
@@ -54917,11 +54941,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 776adaaacdc5c4e8ab0395120a6e972b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fixTransforms: 1
+  fixTransforms: 0
   solver:
     executedInEditor: 0
-    IKPosition: {x: -4.4999995, y: 1.124903, z: -0.12598634}
-    IKPositionWeight: 1
+    IKPosition: {x: -4.4999995, y: 1.4941087, z: -0.118472576}
+    IKPositionWeight: 0.5
     root: {fileID: 2019287484}
     target: {fileID: 0}
     spine:
@@ -54934,6 +54958,46 @@ MonoBehaviour:
       length: 0
       sqrMag: 0
       axis: {x: 0.11040968, y: 0.99388623, z: 0.00000005960466}
+      baseForwardOffsetEuler: {x: 0, y: 0, z: 0}
+    - transform: {fileID: 1585036102}
+      weight: 0
+      solverPosition: {x: 0, y: 0, z: 0}
+      solverRotation: {x: 0, y: 0, z: 0, w: 0}
+      defaultLocalPosition: {x: -0.0457661, y: -2.664535e-16, z: -3.859722e-17}
+      defaultLocalRotation: {x: 0, y: 0, z: 0, w: 1}
+      length: 0
+      sqrMag: 0
+      axis: {x: 0.11040968, y: 0.99388623, z: 0.00000005960466}
+      baseForwardOffsetEuler: {x: 0, y: 0, z: 0}
+    - transform: {fileID: 299743164}
+      weight: 0
+      solverPosition: {x: 0, y: 0, z: 0}
+      solverRotation: {x: 0, y: 0, z: 0, w: 0}
+      defaultLocalPosition: {x: -0.0457661, y: -3.5527135e-16, z: -4.8759336e-17}
+      defaultLocalRotation: {x: 0, y: 0, z: 0, w: 1}
+      length: 0
+      sqrMag: 0
+      axis: {x: 0.11040968, y: 0.99388623, z: 0.00000005960466}
+      baseForwardOffsetEuler: {x: 0, y: 0, z: 0}
+    - transform: {fileID: 746111087}
+      weight: 0
+      solverPosition: {x: 0, y: 0, z: 0}
+      solverRotation: {x: 0, y: 0, z: 0, w: 0}
+      defaultLocalPosition: {x: -0.0457661, y: -1.5987211e-16, z: -1.1059084e-16}
+      defaultLocalRotation: {x: 0, y: -0, z: -0.07167392, w: 0.9974281}
+      length: 0
+      sqrMag: 0
+      axis: {x: -0.03282994, y: 0.999461, z: 0.00000005960466}
+      baseForwardOffsetEuler: {x: 0, y: 0, z: 0}
+    - transform: {fileID: 1283232482}
+      weight: 0
+      solverPosition: {x: 0, y: 0, z: 0}
+      solverRotation: {x: 0, y: 0, z: 0, w: 0}
+      defaultLocalPosition: {x: -0.23287229, y: 1.7763567e-16, z: 2.6498385e-16}
+      defaultLocalRotation: {x: -0.001158909, y: 0.0009544619, z: -0.25864908, w: 0.96597016}
+      length: 0
+      sqrMag: 0
+      axis: {x: -0.5278646, y: 0.8493267, z: 0.0016639531}
       baseForwardOffsetEuler: {x: 0, y: 0, z: 0}
     head:
       transform: {fileID: 1471173000}
