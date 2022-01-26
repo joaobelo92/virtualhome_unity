@@ -69473,7 +69473,9 @@ MonoBehaviour:
   - <char0> [putin] <cutlets> (1) <fridge> (1)
   - <char0> [close] <fridge> (1)
   lines2:
+  - <char0> [lookat] <microwave> (1)
   - <char0> [walk] <microwave> (1)
+  - <char0> [lookat] <fridge> (1)
   - <char0> [walk] <fridge> (1)
 --- !u!114 &2086136796
 MonoBehaviour:

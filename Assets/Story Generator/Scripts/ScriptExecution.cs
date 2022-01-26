@@ -3282,8 +3282,8 @@ namespace StoryGenerator.Utilities
                 ScriptPair sp = spl[spli];
                 State last = sl.Last();
 
-                // if (sp.Action is GotoAction && gotoExecDepth < sl.Count)
-                //     gotoExecDepth = spli;
+                if (sp.Action is GotoAction && gotoExecDepth < sl.Count)
+                    gotoExecDepth = spli;
                 foreach (IStateGroup sg in sp.ProcessMethod(sp.Action, last))
                 {
                     StateList appSl = new StateList(sl);
@@ -3293,10 +3293,10 @@ namespace StoryGenerator.Utilities
                     {
                         yield return newSl;
                     }
-                    // if (/*s.Action is GotoAction && spli < gotoExecDepth - 1 || */ execStartTime.ElapsedMilliseconds > processingTimeLimit)
-                    // {
-                    //     break;
-                    // }
+                    if (/*s.Action is GotoAction && spli < gotoExecDepth - 1 || */ execStartTime.ElapsedMilliseconds > processingTimeLimit)
+                    {
+                        break;
+                    }
                 }
             }
         }

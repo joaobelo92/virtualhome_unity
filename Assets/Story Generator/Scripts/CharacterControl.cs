@@ -376,7 +376,21 @@ namespace StoryGenerator
             Transform lookAtTarget = objToWatch.transform.Find("LookAtTarget") ?? objToWatch.transform;
             
             ikSolverLookAt.solver.target = lookAtTarget;
+            ikSolverLookAt.solver.IKPositionWeight = 0;
+            StartCoroutine(Rotate(ikSolverLookAt));
             yield return new WaitForSeconds(duration);
+        }
+
+        public IEnumerator Rotate(LookAtIK ikSolver, float duration = 0.5f)
+        {
+            float t = 0.0f;
+            while ( t  < duration )
+            {
+                t += Time.deltaTime;
+                float weight = Mathf.Lerp(0, 0.7f, t / duration) % 0.8f;
+                ikSolverLookAt.solver.IKPositionWeight = weight;
+                yield return null;
+            }
         }
 
         public IEnumerator Stand()
